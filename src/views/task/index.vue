@@ -1,0 +1,195 @@
+<template>
+    <page-title title="我的任务"></page-title>
+    <div class="tabs bb">
+        <ul>
+            <li class="fs-30" :class="{'active': status==0}" @click="handleTab(0)">
+                <span>未完成</span>
+            </li>
+            <li class="fs-30" :class="{'active': status==1}" @click="handleTab(1)">
+                <span>待评价</span>
+            </li>
+            <li class="fs-30" :class="{'active': status==2}" @click="handleTab(2)">
+                <span>已完成</span>
+            </li>
+        </ul>
+    </div>
+    <div class="page page-task" 
+        infinite-scroll-distance="100" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-disabled="loadMoreBusy" 
+        v-infinite-scroll="loadMore()">
+        <ul class="grid" v-if="!$loadingRouteData && list.length">
+            <li v-for="item of list" @click="goDetail(item.id)">
+                <span class="date-time radius8 fs-white fs-24">{{item.createTime}}</span>
+                <div class="msg-card radius10 mt20 bd">
+                    <div class="title fs-30">
+                        <p class="text-overflow fs-black">{{item.taskName}}</p>
+                    </div>
+                    <a class="fs-gray fs-24" 
+                    href="javascript:;">
+                        点击查看
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <empty-tips v-if="!$loadingRouteData && !list.length" text="暂无数据"></empty-tips>
+        <load-more v-lazy="500" v-show="loadMoreBusy"></load-more>
+    </div>
+</template>
+<script>
+    import PageTitle from 'components/PageTitle'
+    import LoadMore from 'components/LoadMore'
+    import vFooter from 'components/Footer'
+    import EmptyTips from 'components/EmptyTips'
+
+    import { userinfo } from 'vx/getters'
+    export default {
+        data() {
+            return {
+                list: [],
+                page: 1,
+                loadMoreBusy: false,
+                loadMoreEnd: false,
+                status: 0
+            }
+        },
+        components: {
+            PageTitle,
+            LoadMore,
+            vFooter,
+            EmptyTips
+        },
+        methods: {
+            loadMore() {
+                this.$xhr.loadMore(this, 'task/getUserTasksByParams', {
+                    userId: this.userinfo.userId,
+                    page: this.page + 1,
+                    status: this.status
+                })
+                .then((list) => {
+                    this.list.push.apply(this.list, list);
+                });
+            },
+            handleTab(status) {
+                if(status == this.status) return;
+                this.status = status;
+                this.getList();
+            },
+            getList: async function() {
+                await this.$xhr.getUserInfo();
+                return this.$xhr.getData('task/getUserTasksByParams', {
+                    userId: this.userinfo.userId,
+                    page: 1,
+                    status: this.status
+                })
+                .then((list) => {
+                    this.$set('list', list);
+                });
+            },
+            goDetail(id) {
+                this.$router.go({path: '/task/detail', query: {id: id}});
+            }
+        },
+        route: {
+            data() {
+                return this.getList();
+            }
+        },
+        vuex: {
+            getters: {
+                userinfo
+            }
+        }
+    }
+</script>
+<style lang="less" scoped>
+    @import '~src/styles/mixin.less';
+    .tabs {
+        z-index: 100;
+        ul {
+            display: flex;
+        }
+        li {
+            flex: 1;
+            display: flex;
+            height: 1.33333333rem; // 100px
+            align-items: center;
+            background-color: #fff;
+            position: relative;
+            &:nth-of-type(2) span {
+                border-right: solid 1px @bd-color;
+                border-left: solid 1px @bd-color;
+            }
+            &.active {
+                span {
+                    color: @orange;
+                }
+                &:after {
+                    content: " ";
+                    display: block;
+                    width: 2.26666667rem; // 170px
+                    height: .05333333rem; // 4px
+                    background-color: @orange;
+                    position: absolute;
+                    bottom: 0;
+                    .translate(-50%, 0);
+                    left: 50%;
+                }
+            }
+        }
+        span {
+            width: 100%;
+            text-align: center;
+            color: @c-999999;
+        }
+    }
+    .page-task {
+        li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: .66666667rem
+        }
+        .date-time {
+            padding: .12rem .38666667rem;
+            background-color: @c-d8d8d8;
+        }
+        .msg-card {
+            width: 100%;
+            background-color: #fff;
+            .title {
+                padding: .44rem 0;
+                position: relative;
+                p {
+                    width: 80%;
+                    text-indent: .26666667rem;
+                }
+                border-bottom: dashed 1px @bd-color;
+                &.new:after {
+                    content: " ";
+                    display: block;
+                    .wh(1.06666667rem);
+                    .background-img('new@2x.png');
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                }
+            }
+            a {
+                display: flex;
+                align-items: center;
+                .line-height(.93333333rem); // 70px
+                text-indent: .26666667rem;
+                justify-content: space-between;
+                &:after {
+                    content: " ";
+                    display: block;
+                    width: .18666667rem; // 14px
+                    height: .29333333rem; // 22px
+                    .background-img('jiantou_zuo@3x.png');
+                    margin-right: .33333333rem; // 25px
+                }
+            }
+        }
+    }
+</style>

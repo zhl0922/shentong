@@ -1,0 +1,85 @@
+<template>
+    <div
+    infinite-scroll-distance="100" 
+    infinite-scroll-immediate-check="false"
+    infinite-scroll-disabled="loadMoreBusy" 
+    v-infinite-scroll="loadMore()">
+        <div class="m-list grid" v-for="item of list" v-link="{path: '/notice/detail', query: {id: item.id}}">
+            <h1 class="title">{{item.title}}</h1>
+            <p class="desc text-overflow">{{item.introduction}}</p>
+            <div class="time">{{item.createtime}}</div>
+        </div>
+    </div>
+    <empty-tips v-if="!$loadingRouteData && !list.length"></empty-tips>
+    <load-more v-lazy="500" v-show="loadMoreBusy"></load-more>
+</template>
+
+<script>
+import LoadMore from 'components/LoadMore'
+import EmptyTips from 'components/EmptyTips'
+
+export default {
+  data () {
+    return {
+        list: [],
+        page: 1,
+        loadMoreBusy: false,
+        loadMoreEnd: false
+    };
+  },
+  components: {
+    LoadMore,
+    EmptyTips
+  },
+  route: {
+    data: async function() {
+        await this.$xhr.getUserInfo();
+        return this.$xhr.getData('notice/getNotices', {
+            page:1
+        })
+        .then((list) => {
+            this.$set('list', list);
+        });
+    }
+  },
+  methods: {
+    loadMore() {
+        this.$xhr.loadMore(this, 'notice/getNotices',{
+            page: this.page + 1
+        })
+        .then((list) => {
+            this.list.push(list);
+        })
+    }
+  }
+};
+</script>
+
+<style lang="less">
+@import "~src/styles/mixin.less";
+
+.m-list {
+    display: flex;
+    flex-flow: column;
+    padding: .4rem 0;
+    border-bottom: 1px solid @bd-color;
+    .title {
+        .font-size(@fs30);
+        line-height: 2em;
+    }
+    .desc {
+        line-height: 1.5em;
+        font-size: @fs28;
+        color: @c-666666;
+        flex:　1;
+        &:after {
+            content: '...';
+        }
+    }
+    .time {
+        margin-top: .26666667rem; // 20px;
+        text-align: right;
+        color: @c-999999;
+    }
+}
+</style>

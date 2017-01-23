@@ -1,0 +1,122 @@
+
+<template>
+    <page-title title="发布日报"></page-title>
+    <div class="page page-release"> 
+        <div v-if="!$loadingRouteData">
+            <text-card
+            title="简介"
+            placeholder="请输入简介"
+            :value.sync="introduction"></text-card>
+
+            <text-card
+            title="已完成工作"
+            placeholder="请输入已完成工作"
+            :value.sync="finishedwork"></text-card>
+
+            <text-card
+            title="未完成工作"
+            placeholder="请输入未完成工作"
+            :value.sync="unfinishedwork"></text-card>
+
+            <text-card
+            title="遇到的问题"
+            placeholder="请输入遇到的问题"
+            :value.sync="problems"></text-card>
+
+            <text-card
+            title="备注"
+            placeholder="请输入备注"
+            :value.sync="remarks"></text-card>
+        </div>
+    </div>
+    <div class="bottom bg-white bt">
+    	<btn @click="handleSubmit">提 交</btn>
+    </div>
+	
+</template>
+<script>
+    import PageTitle from 'components/PageTitle'
+    import vFooter from 'components/Footer'
+    import Cell from 'components/Cell'
+    import Btn from 'components/Btn'
+    import TextCard from './text-card'
+
+    import { userinfo } from 'vx/getters'
+    
+    export default {
+    	data() {
+    		return {
+    			introduction: '',
+                finishedwork: '',
+                unfinishedwork: '',
+                problems: '',
+                remarks: ''
+    		}
+    	},
+        components: {
+            PageTitle,
+            vFooter,
+            Cell,
+            Btn,
+            TextCard
+        },
+        methods: {
+            handleSubmit: async function() {
+                if(!this.verification()) return;
+                await this.$xhr.getUserInfo();
+                let param = [{
+                    userId: this.userinfo.userId,
+                    introduction: this.introduction,
+                    finishedwork: this.finishedwork,
+                    unfinishedwork: this.unfinishedwork,
+                    problems: this.problems,
+                    remark: this.remarks
+                }];
+                this.$xhr.handle('report/publishDiary', {
+                    diaryReport: JSON.stringify(param)
+                })
+                .then((userInfo) => {
+                    this.$toast.show('发布成功');
+                    this.$lazyroute.replace('/note');
+                });
+            },
+        	verification() {
+                if(this.introduction == '') {
+                    this.$toast.show('请输入简介');
+                    return false;
+                }
+                if(this.finishedwork == '') {
+                    this.$toast.show('请输入已完成工作');
+                    return false;
+                }
+                if(this.unfinishedwork == '') {
+                    this.$toast.show('请输入未完成工作');
+                    return false;
+                }
+                if(this.problems == '') {
+                    this.$toast.show('请输入遇到的问题');
+                    return false;
+                }
+                if(this.remarks == '') {
+                    this.$toast.show('请输入备注');
+                    return false;
+                }
+                return true;
+            }
+        },
+        route: {
+            data: async function(transition) {
+                await this.$xhr.getUserInfo();
+                this.$loading.hide();
+            }
+        },
+        vuex: {
+            getters: {
+                userinfo
+            }
+        }
+    }
+</script>
+<style lang="less">
+    @import '~src/styles/mixin.less';
+</style>

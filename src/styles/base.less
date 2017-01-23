@@ -1,0 +1,136 @@
+@import '~src/styles/mixin.less';
+input, textarea, a {
+    -webkit-appearance:none;
+    border: none;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+label > * {
+    pointer-events: none;
+}
+// 居中
+.grid {
+    width: @gird-w; /* 690px */
+    margin: 0 auto;
+}
+.page {
+    flex: 1;
+    .scroll();
+    padding-bottom: .53333333rem; // 40px
+    position: relative;
+}
+// 遮罩层
+.mask {
+    position: fixed;
+    top: 0;
+    z-index: 499;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+}
+.bottom {
+    display: flex;
+    height: 1.73333333rem; // 130px
+    justify-content: center;
+    align-items: center;
+}
+// 上外边距20
+.mt20 {
+    margin-top: .3125rem; /* 20px */
+}
+.mb20 {
+    margin-bottom: .3125rem; /* 20px */
+}
+.mt50 {
+    margin-top: .66666667rem; // 50px
+}
+// 上内边距20
+.pt20 {
+    padding-top: .3125rem; /* 20px */
+}
+.pt30 {
+    padding-top: .4rem; // 30px
+}
+.pt10 {
+    padding-top: .13333333rem; // 10px
+}
+.pb98 {
+    padding-bottom: @footer-h;
+}
+// 8px圆角
+.radius8 {
+    border-radius: .125rem; /* 8px */
+} 
+.radius10 {
+    border-radius: .13333333rem; // 10px
+} 
+// 边框
+.bd {
+    border: solid 1px @bd-color;
+}
+// 上边框
+.bt {
+    border-top: solid 1px @bd-color;
+}
+// 下边框
+.bb {
+    border-bottom: solid 1px @bd-color;
+}
+// 点击效果
+.tap-active:active {
+  background-color: #ECECEC;
+}
+// 单行文本超出省略号  需设置宽度
+.text-overflow {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+.fs-white {
+    color: #fff;
+}
+.fs-gray {
+    color: @c-999999;
+}
+.fs-gray-plus {
+    color: @c-666666;
+}
+.fs-orange {
+    color: @orange;
+}
+.fs-black {
+    color: @c-333333;
+}
+.bg-white {
+    background-color: #fff;
+}
+.bg-gray {
+    background-color: @bg-color !important;
+}
+.fs-24 {
+    font-size: @fs24;
+}
+.fs-26 {
+    font-size: @fs26;
+}
+.fs-28 {
+    font-size: @fs28;
+}
+.fs-30 {
+    font-size: @fs30;
+}
+.fs-32 {
+    font-size: @fs32;
+}
+.fs-36 {
+    font-size: @fs36;
+}
+.overflow-hidden {
+    overflow: hidden;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}

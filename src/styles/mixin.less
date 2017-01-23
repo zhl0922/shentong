@@ -1,0 +1,65 @@
+/*页面宽度*/
+@body-w: 10rem;
+@gird-w: 9.2rem; // 690px
+@footer-h: 1.30666667rem; // 98px
+/*字体大小*/
+@fs54: .72rem; // 54px
+@fs36: .48rem; // 36px
+@fs32: .42666667rem; // 32px
+@fs30: .4rem; // 30px
+@fs28: .37333333rem; // 28px
+@fs26: .34666667rem; // 26px
+@fs24: .32rem; // 24px
+@fs22: .29333333rem; // 22px
+/*颜色*/
+@bd-color: #e0e0e0;
+@bg-color: #f8f8f8;
+@c-999999: #999999;
+@c-cccccc: #cccccc;
+@c-666666: #666666;
+@c-333333: #333333;
+@orange: #f26b00;
+@c-d8d8d8: #d8d8d8;
+@c-fff: #fff;
+/*层级*/
+@zx10: 10;//页面级
+@zx20: 20;//页面级较高
+@zx100: 100;//组件级
+@zx200: 200;//组件级较高
+@zx500: 500;//弹出层
+@zx999: 999;//最高
+
+.translate(@x, @y) {
+    transform: translate(@x, @y);
+}
+// 设置背景图
+.background-img(@url) {
+    @base: '~assets/';
+    background: url('@{base}@{url}') no-repeat;
+    background-size: 100% 100%;
+}
+.font-size(@fs) {
+    font-size: @fs;
+    line-height: @fs;
+}
+.wh(@wh) {
+    width: @wh;
+    height: @wh;
+}
+.line-height(@h) {
+    height: @h;
+    line-height: @h;
+}
+.scroll() {
+    overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
+}
+.px-dpr(@name, @px) {
+    @{name}: @px / 2;
+    [data-dpr="2"] & {
+        @{name}: @px;
+    }
+    [data-dpr="3"] & {
+        @{name}: @px / 2 * 3;
+    }
+}
